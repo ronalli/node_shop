@@ -5,3 +5,7 @@ p #{foo}
 p #{bar}
 each val, index in goods
 	p #{val['name']} cost #{val['cost']}
+	img(
+		src="images/" + val['image'], 
+		alt=""
+		)

@@ -37,3 +37,35 @@ app.get('/', (req, res) => {
 })
 
 
+app.get('/cat', (req, res) => {
+	// console.log(req.query.id);
+	let catId = req.query.id;
+	let cat = new Promise((resolve, reject) => {
+		connect.query(
+			'SELECT * FROM category WHERE id=' + catId,
+			function (error, rezult) {
+				if (error) reject(error)
+				resolve(rezult)
+			}
+		)
+	})
+
+	let goods = new Promise((resolve, reject) => {
+		connect.query(
+			'SELECT * FROM goods WHERE category=' + catId,
+			function (error, rezult) {
+				if (error) reject(error)
+				resolve(rezult)
+			}
+		)
+	})
+
+	Promise.all([cat, goods]).then((value) => {
+		console.log(value[1]);
+	})
+
+	// console.log(cat);
+	res.render('cat', {})
+})
+
+
