@@ -1,6 +1,7 @@
 let express = require('express')
 let app = express()
 let mysql = require('mysql')
+let tools = require('./public/js/tool')
 
 app.use(express.static('public'))
 
@@ -20,17 +21,13 @@ app.listen(3000, function () {
 app.get('/', (req, res) => {
 	connect.query(
 		'SELECT * FROM goods',
-		function (err, result) {
+		function (err, rezult) {
 			if (err) throw err
-			let goods = {};
-			for (let i = 0; i < result.length; i++) {
-				goods[result[i]['id']] = result[i];
-			}
-			// console.log(JSON.parse(JSON.stringify(goods)));
+			let goods = tools.parser(rezult);
 			res.render('main', {
 				foo: 11,
 				bar: 15,
-				goods: JSON.parse(JSON.stringify(goods))
+				goods: goods
 			})
 		}
 	)
@@ -45,7 +42,7 @@ app.get('/cat', (req, res) => {
 			'SELECT * FROM category WHERE id=' + catId,
 			function (error, rezult) {
 				if (error) reject(error)
-				resolve(rezult)
+				resolve(tools.parser(rezult))
 			}
 		)
 	})
@@ -55,7 +52,7 @@ app.get('/cat', (req, res) => {
 			'SELECT * FROM goods WHERE category=' + catId,
 			function (error, rezult) {
 				if (error) reject(error)
-				resolve(rezult)
+				resolve(tools.parser(rezult))
 			}
 		)
 	})
