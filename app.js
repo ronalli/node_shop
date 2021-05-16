@@ -42,7 +42,7 @@ app.get('/cat', (req, res) => {
 			'SELECT * FROM category WHERE id=' + catId,
 			function (error, rezult) {
 				if (error) reject(error)
-				resolve(tools.parser(rezult))
+				resolve(rezult)
 			}
 		)
 	})
@@ -59,10 +59,14 @@ app.get('/cat', (req, res) => {
 
 	Promise.all([cat, goods]).then((value) => {
 		console.log(value[1]);
+		res.render('cat', {
+			category: value[0],
+			goods: value[1]
+		})
 	})
 
 	// console.log(cat);
-	res.render('cat', {})
+
 })
 
 

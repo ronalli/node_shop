@@ -1,3 +1,53 @@
 * {
 	font-family: sans-serif;
 }
+
+.wrap {
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+}
+
+.content {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+
+}
+
+.site-header {
+	height: auto;
+	padding: 20px 0;
+}
+
+.site-header h1 {
+	display: inline-block;
+}
+
+.full-width {
+	width: 100%;
+	max-width: 0 auto;
+	padding: 0;
+}
+
+
+.text-center {
+	text-align: center;
+}
+
+/* -------------------card--------------------- */
+
+.card {
+	border: 1px solid #dedede;
+}
+
+.card-images {
+	display: block;
+	margin: 20px auto;
+	max-width: 90%;
+	min-height: 150px;
+}
+
+

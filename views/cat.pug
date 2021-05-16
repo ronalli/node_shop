@@ -1,3 +1,16 @@
 include header
 
-h2 Category
+div(class="wrap")
+	div(class="content")
+		header(class="site-header")
+			include site-header
+		
+		div(class="container")
+			div(class="row")
+				div(class="col col-md-12")
+					h2 #{category[0]['category']}
+				each val, index in goods
+					include card-item
+
+
+				div(class="description") #{category[0]['description']}
