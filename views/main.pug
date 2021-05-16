@@ -1,11 +1,18 @@
 include header
 
-h2 Hi, my first project on pug
-p #{foo}
-p #{bar}
-each val, index in goods
-	p #{val['name']} cost #{val['cost']}
-	img(
-		src="images/" + val['image'], 
-		alt=""
-		)
+div(class="wrap")
+	div(class="content")
+		header(class="site-header")
+			include site-header
+		div(class="container")
+			div(class="row")
+				each val, index in goods
+					include card-item
+
+//- h2 Hi, my first project on pug
+//- each val, index in goods
+//- 	p #{val['name']} cost #{val['cost']}
+//- 	img(
+//- 		src="images/" + val['image'], 
+//- 		alt=""
+//- 		)

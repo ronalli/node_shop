@@ -25,8 +25,6 @@ app.get('/', (req, res) => {
 			if (err) throw err
 			let goods = tools.parser(rezult);
 			res.render('main', {
-				foo: 11,
-				bar: 15,
 				goods: goods
 			})
 		}
@@ -58,15 +56,26 @@ app.get('/cat', (req, res) => {
 	})
 
 	Promise.all([cat, goods]).then((value) => {
-		console.log(value[1]);
+		// console.log(value[1]);
 		res.render('cat', {
 			category: value[0],
 			goods: value[1]
 		})
 	})
+})
 
-	// console.log(cat);
 
+app.get('/goods', (req, res) => {
+	connect.query(
+		'SELECT * FROM goods WHERE id=' + req.query.id,
+		function (error, rezult) {
+			if (error) throw error
+			// console.log(JSON.parse(JSON.stringify(rezult)));
+			res.render('goods', {
+				goods: JSON.parse(JSON.stringify(rezult))
+			})
+		}
+	)
 })
 
 
