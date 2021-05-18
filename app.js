@@ -78,4 +78,12 @@ app.get('/goods', (req, res) => {
 	)
 })
 
-
+app.post('/get-category-list', (req, res) => {
+	connect.query(
+		'SELECT id, category FROM category', (error, rezult) => {
+			if (error) throw error
+			// console.log(rezult);
+			res.json(rezult)
+		}
+	)
+})
