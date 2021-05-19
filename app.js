@@ -4,6 +4,7 @@ let mysql = require('mysql')
 let tools = require('./public/js/tool')
 
 app.use(express.static('public'))
+app.use(express.json())
 
 app.set('view engine', 'pug')
 
@@ -86,4 +87,15 @@ app.post('/get-category-list', (req, res) => {
 			res.json(rezult)
 		}
 	)
+})
+
+
+app.post('/get-goods-info', (req, res) => {
+	connect.query(
+		'SELECT id, name, cost FROM goods WHERE id IN (' + req.body.key.join(',') + ')', (error, rezult) => {
+			if (error) throw error
+			console.log(tools.parser(rezult));
+		}
+	)
+	// console.log(req.body);
 })
