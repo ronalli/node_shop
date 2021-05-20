@@ -91,11 +91,17 @@ app.post('/get-category-list', (req, res) => {
 
 
 app.post('/get-goods-info', (req, res) => {
-	connect.query(
-		'SELECT id, name, cost FROM goods WHERE id IN (' + req.body.key.join(',') + ')', (error, rezult) => {
-			if (error) throw error
-			console.log(tools.parser(rezult));
-		}
-	)
+	if (req.body.key.length != 0) {
+		connect.query(
+			'SELECT id, name, cost FROM goods WHERE id IN (' + req.body.key.join(',') + ')', (error, rezult) => {
+				if (error) throw error
+				console.log(tools.parser(rezult));
+				res.json(tools.parser(rezult))
+			}
+		)
+	} else {
+		res.send('0')
+	}
 	// console.log(req.body);
 })
+

@@ -56,12 +56,16 @@
 	width: 300px;
 	min-height: 100vh;
 	position: fixed;
-	left: -300px;
+	/* left: -300px; */
 	top: 0;
 	z-index: 999999;
 	padding: 10px;
 	transition: all ease 1s;
 	color: #fff;
+}
+
+.site-nav a {
+	color: #424242;
 }
 
 .close-button-div {
@@ -78,4 +82,8 @@ ul.category-list {
 
 ul.category-list a {
 	color: #424242;
+}
+
+.cart-minus, .cart-plus {
+	cursor: pointer;
 }
