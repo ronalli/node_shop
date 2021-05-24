@@ -1,0 +1,23 @@
+include header
+
+div(class="wrap")
+	div(class="content")
+		header(class="site-header")
+			include site-header
+		
+		div(class="container")
+			div(class="row")
+				each val2, index2 in categoryDescription
+					div(class="col col-12")
+						h2
+							a(
+								href="/cat?id=" + val2['id']
+							) #{val2['category']}
+					each val, index in goods
+						if(val2['id'] == val['category'])
+							include card-item
+	
+
+
+	include nav
+	include footer

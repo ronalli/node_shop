@@ -20,16 +20,34 @@ app.listen(3000, function () {
 })
 
 app.get('/', (req, res) => {
-	connect.query(
-		'SELECT * FROM goods',
-		function (err, rezult) {
-			if (err) throw err
-			let goods = tools.parser(rezult);
-			res.render('main', {
-				goods: goods
-			})
-		}
-	)
+	let goods = new Promise((resolve, reject) => {
+		connect.query(
+			'SELECT id, name, cost, image, category FROM (SELECT id, name, cost, image, category, if(if(@curr_category != category, @curr_category := category, "") != "", @k := 0, @k := @k + 1) as ind  FROM goods, ( select @curr_category := "" ) v ) goods WHERE ind < 3',
+			function (error, rezult) {
+				if (error) return reject(error)
+				resolve(rezult)
+			}
+		)
+	})
+
+	let categoryDescription = new Promise((resolve, reject) => {
+		connect.query(
+			'SELECT * FROM category',
+			function (error, rezult) {
+				if (error) return reject(error)
+				resolve(rezult)
+			}
+		)
+	})
+
+	Promise.all([goods, categoryDescription]).then((value) => {
+		console.log(tools.parserStringify(value[0]));
+		res.render('index', {
+			goods: tools.parserStringify(value[0]),
+			categoryDescription: tools.parserStringify(value[1])
+		})
+	})
+
 })
 
 
@@ -95,7 +113,7 @@ app.post('/get-goods-info', (req, res) => {
 		connect.query(
 			'SELECT id, name, cost FROM goods WHERE id IN (' + req.body.key.join(',') + ')', (error, rezult) => {
 				if (error) throw error
-				console.log(tools.parser(rezult));
+				// console.log(tools.parser(rezult));
 				res.json(tools.parser(rezult))
 			}
 		)
