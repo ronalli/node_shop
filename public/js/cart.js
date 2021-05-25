@@ -1,9 +1,10 @@
+// const tools = require('./tool')
+
 let cart = {}
 
 document.querySelectorAll('.add-to-cart').forEach(element => {
 	element.addEventListener('click', addToCart)
 })
-
 
 if (localStorage.getItem('cart')) {
 	cart = JSON.parse(localStorage.getItem('cart'))
@@ -48,11 +49,11 @@ function showCart(data) {
 		out += `<tr><td><i class="fas fa-minus-square cart-minus" data-goods_id="${key}"></i></td>`
 		out += `<td>${cart[key]}</td>`
 		out += `<td><i class="fas fa-plus-square cart-plus" data-goods_id="${key}"></i></td>`
-		out += `<td>${data[key]['cost'] * cart[key]} uah</td>`
+		out += `<td>${(data[key]['cost'] * cart[key]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$& ')} uah</td>`
 		out += `</tr>`
 		total += cart[key] * data[key]['cost']
 	}
-	out += `<tr><td colspan="3">Total:</td><td>${total}</td></tr>`
+	out += `<tr><td colspan="3">Total:</td><td>${total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$& ')} uah</td></tr>`
 	out += '</tbody></table>'
 	document.querySelector('.cart-nav').innerHTML = out
 	document.querySelectorAll('.cart-minus').forEach((element) => {
