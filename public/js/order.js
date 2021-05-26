@@ -11,16 +11,21 @@ function submitForm(event) {
 	let rule = document.querySelector('#rule')
 
 	if (userName === '' || phone === '' || email === '' || address === '') {
-		// Swal.fire({
-		// 	title: 'Error!',
-		// 	text: 'Do you want to continue',
-		// 	icon: 'error',
-		// 	confirmButtonText: 'Cool'
-		// })
+		Swal.fire({
+			title: 'Ошибка',
+			text: 'Вы не заполнили поля',
+			icon: 'error',
+			confirmButtonText: 'Хорошо'
+		})
 	}
 
 	if (rule.checked) {
-
+		Swal.fire({
+			title: 'Ошибка',
+			text: 'Вы не согласились с правилами',
+			icon: 'error',
+			confirmButtonText: 'Хорошо'
+		})
 	}
 
 	fetch('/finish-order', {
@@ -40,9 +45,19 @@ function submitForm(event) {
 		return response.text()
 	}).then(body => {
 		if (body == 1) {
-			console.log('super');
+			Swal.fire({
+				title: 'Информация',
+				text: 'Заказ успешно отправлен',
+				icon: 'info',
+				confirmButtonText: 'Хорошо'
+			})
 		} else {
-
+			Swal.fire({
+				title: 'Произошла ощибка',
+				text: 'Что-то пошло не так',
+				icon: 'info',
+				confirmButtonText: 'Повторить'
+			})
 		}
 	})
 
