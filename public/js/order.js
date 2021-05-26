@@ -1,3 +1,4 @@
+
 document.querySelector('#lite-shop-order').addEventListener('submit', submitForm)
 
 function submitForm(event) {
@@ -10,7 +11,12 @@ function submitForm(event) {
 	let rule = document.querySelector('#rule')
 
 	if (userName === '' || phone === '' || email === '' || address === '') {
-
+		// Swal.fire({
+		// 	title: 'Error!',
+		// 	text: 'Do you want to continue',
+		// 	icon: 'error',
+		// 	confirmButtonText: 'Cool'
+		// })
 	}
 
 	if (rule.checked) {
