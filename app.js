@@ -2,6 +2,7 @@ let express = require('express')
 let app = express()
 let mysql = require('mysql')
 let tools = require('./public/js/tool')
+const nodemailer = require('nodemailer')
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -130,14 +131,14 @@ app.post('/get-goods-info', (req, res) => {
 
 
 app.post('/finish-order', (req, res) => {
-	if (req.body.key.length !== 0) {
+	if (req.body.key.length != 0) {
 		// res.send('1')
 		let key = Object.keys(req.body.key)
 		connect.query(
 			'SELECT id, name, cost FROM goods WHERE id IN (' + key.join(',') + ')', (error, result) => {
 				if (error) throw error
-				console.log(result);
-				sendMail(req.body, result).catch(console.error)
+				// console.log(result);
+				sendMailServer(req.body, result).catch(console.error)
 				res.send('1')
 			}
 		)
@@ -148,6 +149,41 @@ app.post('/finish-order', (req, res) => {
 })
 
 
-function sendMail(data, result) {
+async function sendMailServer(data, result) {
+	let total = 0;
+	let res = '<h2>Order in lite shop</h2>';
+	for (i = 0; i < result.length; i++) {
+		res += `<p>${result[i]['name']} - ${data.key[result[i]['id']]} - ${result[i]['cost'] * data.key[result[i]['id']]} uah</p>`
+		total += `${result[i]['cost'] * data.key[result[i]['id']]}`
+	}
+	res += `<hr>`
+	res += `Total: ${total} uah`
+	res += `<hr>Username: ${data.username}`
+	res += `<hr>Phone: ${data.phone}`
+	res += `<hr>Email: ${data.email}`
+	res += `<hr>Address: ${data.address}`
 
+	// console.log(res);
+	// console.log(data);
+	// console.log(result);
+	let testAccount = await nodemailer.createTestAccount();
+	let transporter = nodemailer.createTransport({
+		host: "smtp.ethereal.email",
+		port: 587,
+		secure: false, // true for 465, false for other ports
+		auth: {
+			user: testAccount.user, // generated ethereal user
+			pass: testAccount.pass, // generated ethereal password
+		},
+	})
+
+	let info = await transporter.sendMail({
+		from: '"Fred Foo 👻" <khakimov.nikita.v@gmail.com>', // sender address
+		to: `khakimov.nikita.v@gmail.com, ${data.email}`, // list of receivers
+		subject: "Hello ✔", // Subject line
+		text: "Hello world?", // plain text body
+		html: `${res}`, // html body
+	})
+	console.log("Message sent: %s", info.messageId);
+	console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }

@@ -4,9 +4,6 @@
 	"description": "shop, node, express, js",
 	"main": "app.js",
 	"license": "MIT",
-	"scripts": {
-		"start": "nodemon app.js"
-	},
 	"dependencies": {
 		"@babel/plugin-transform-modules-commonjs": "^7.14.0",
 		"@fortawesome/fontawesome-free": "^5.15.3",
@@ -15,6 +12,7 @@
 		"express": "^4.17.1",
 		"mustard-ui": "^1.0.4",
 		"mysql": "^2.18.1",
+		"nodemailer": "^6.6.1",
 		"pug": "^3.0.2",
 		"sweetalert2": "^11.0.11"
 	},
