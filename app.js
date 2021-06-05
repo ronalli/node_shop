@@ -139,14 +139,65 @@ app.post('/finish-order', (req, res) => {
 				if (error) throw error
 				// console.log(result);
 				sendMailServer(req.body, result).catch(console.error)
+				saveOrder(req.body, result)
 				res.send('1')
 			}
 		)
 	} else {
 		res.send('0')
 	}
-
 })
+
+app.get('/admin', (req, res) => {
+	res.render('admin', {})
+})
+
+app.get('/admin-order', (req, res) => {
+	connect.query(
+		`SELECT 
+		shop_order.id as id, 
+			shop_order.user_id as user_id, 
+			shop_order.goods_id as goods_id, 
+			shop_order.goods_cost as goods_cost, 
+			shop_order.goods_amount as goods_amount, 
+			shop_order.total as total, 
+			from_unixtime(date, "%Y-%m-%d %h:%m") as human_date, 
+			user_info.user_name as user, 
+			user_info.user_phone as phone,
+			user_info.address as address  
+	FROM 
+		shop_order 
+	LEFT JOIN 
+		user_info 
+	ON shop_order.user_id=user_info.id`, (error, result) => {   //ORDER BY id DESC
+		if (error) throw error
+		res.render('admin-order', {
+			order: JSON.parse(JSON.stringify(result))
+		})
+	}
+	)
+})
+
+function saveOrder(data, result) {
+	// console.log(data);
+	// console.log(result);
+	//data - информация о пользователях
+	//result - сведения о товаре
+	let sql = "INSERT INTO user_info (user_name, user_phone, user_email, address) VALUES ('" + data.username + "', '" + data.phone + "', '" + data.email + "', '" + data.address + "')"
+	connect.query(sql, (error, resultQuery) => {
+		if (error) throw error
+		console.log('1 user info saved')
+		let userId = resultQuery.insertId
+		date = new Date() / 1000
+		for (i = 0; i < result.length; i++) {
+			sql = "INSERT INTO shop_order (date, user_id, goods_id, goods_cost, goods_amount, total) VALUES (" + date + "," + userId + "," + result[i]['id'] + "," + result[i]['cost'] + "," + data.key[result[i]['id']] + "," + data.key[result[i]['id']] * result[i]['cost'] + " )"
+			connect.query(sql, (error, result) => {
+				if (error) throw error
+				console.log('1 goods saved');
+			})
+		}
+	})
+}
 
 
 async function sendMailServer(data, result) {
