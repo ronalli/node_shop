@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer')
 
 app.use(express.static('public'))
 app.use(express.json())
+app.use(express.urlencoded())
 
 app.set('view engine', 'pug')
 
@@ -177,6 +178,44 @@ app.get('/admin-order', (req, res) => {
 	}
 	)
 })
+
+
+// login form
+
+app.get('/login', (req, res) => {
+	res.render('login')
+})
+
+
+app.post('/login', (req, res) => {
+	console.log('=============================')
+	console.log(req.body)
+	// console.log(req.body.login)
+	// console.log(req.body.password)
+	console.log('=============================')
+	connect.query(
+		'SELECT * FROM user WHERE login="' + req.body.login + '"and password="' + req.body.password + '"', (error, result) => {
+			if (error) throw error
+			if (result.length == 0) {
+				console.log('user not found')
+				res.redirect('/login')
+			} else {
+				result = tools.parserStringify(result)
+				res.cookie('hash', 'userhash')
+				sql = "UPDATE user SET hash='userhash' WHERE id=" + result[0]['id']
+				connect.query(sql, (error, resultQuery) => {
+					if (error) throw error
+					res.redirect('/admin')
+				})
+				// res.end('work2')
+				// console.log(result[0]['id'])
+			}
+			console.log(result);
+		}
+	)
+})
+
+// login form
 
 function saveOrder(data, result) {
 	// console.log(data);

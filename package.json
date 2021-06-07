@@ -9,6 +9,7 @@
 		"@fortawesome/fontawesome-free": "^5.15.3",
 		"browserify": "^17.0.0",
 		"commander": "^7.2.0",
+		"cookie": "^0.4.1",
 		"express": "^4.17.1",
 		"mustard-ui": "^1.0.4",
 		"mysql": "^2.18.1",
