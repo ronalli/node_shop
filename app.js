@@ -1,12 +1,16 @@
 let express = require('express')
 let app = express()
 let mysql = require('mysql')
+let cookieParser = require('cookie-parser')
 let tools = require('./public/js/tool')
 const nodemailer = require('nodemailer')
+const tool = require('./public/js/tool')
+// let urlAdmin = ['/admin', '/admin-order']
 
 app.use(express.static('public'))
 app.use(express.json())
 app.use(express.urlencoded())
+app.use(cookieParser())
 
 app.set('view engine', 'pug')
 
@@ -19,6 +23,17 @@ let connect = mysql.createConnection({
 
 app.listen(3000, function () {
 	console.log('nodejs express work on 3000')
+})
+
+app.use((req, res, next) => {
+	// console.log('Time:', Date.now())
+	// console.log(req);
+	if (req.originalUrl == '/admin' || req.originalUrl == '/admin-order') {
+		tools.protectionAdmin(req, res, connect, next)
+	}
+	else {
+		next()
+	}
 })
 
 app.get('/', (req, res) => {
@@ -150,27 +165,44 @@ app.post('/finish-order', (req, res) => {
 })
 
 app.get('/admin', (req, res) => {
-	res.render('admin', {})
+	res.render('admin')
+	// console.log('Cokies: ', req.cookies);
+	// if (req.cookies.hash == undefined || req.cookies.id == undefined) {
+	// 	res.redirect('login')
+	// 	return false;
+	// }
+	// connect.query(
+	// 	'SELECT * FROM user WHERE id=' + req.cookies.id + ' AND hash="' + req.cookies.hash + '"', (error, result) => {
+	// 		if (error) throw error
+	// 		if (result.length == 0) {
+	// 			console.log('error user not found');
+	// 			res.redirect('/login')
+	// 		} else {
+	// 			res.render('admin', {})
+	// 		}
+	// 	}
+	// )
+	// res.render('admin', {})
 })
 
 app.get('/admin-order', (req, res) => {
 	connect.query(
 		`SELECT 
-		shop_order.id as id, 
-			shop_order.user_id as user_id, 
-			shop_order.goods_id as goods_id, 
-			shop_order.goods_cost as goods_cost, 
-			shop_order.goods_amount as goods_amount, 
-			shop_order.total as total, 
-			from_unixtime(date, "%Y-%m-%d %h:%m") as human_date, 
-			user_info.user_name as user, 
-			user_info.user_phone as phone,
-			user_info.address as address  
-	FROM 
-		shop_order 
-	LEFT JOIN 
-		user_info 
-	ON shop_order.user_id=user_info.id`, (error, result) => {   //ORDER BY id DESC
+			shop_order.id as id, 
+				shop_order.user_id as user_id, 
+				shop_order.goods_id as goods_id, 
+				shop_order.goods_cost as goods_cost, 
+				shop_order.goods_amount as goods_amount, 
+				shop_order.total as total, 
+				from_unixtime(date, "%Y-%m-%d %h:%m") as human_date, 
+				user_info.user_name as user, 
+				user_info.user_phone as phone,
+				user_info.address as address  
+		FROM 
+			shop_order 
+		LEFT JOIN 
+			user_info 
+		ON shop_order.user_id=user_info.id`, (error, result) => {   //ORDER BY id DESC
 		if (error) throw error
 		res.render('admin-order', {
 			order: JSON.parse(JSON.stringify(result))
@@ -201,8 +233,10 @@ app.post('/login', (req, res) => {
 				res.redirect('/login')
 			} else {
 				result = tools.parserStringify(result)
-				res.cookie('hash', 'userhash')
-				sql = "UPDATE user SET hash='userhash' WHERE id=" + result[0]['id']
+				let hashUser = tools.randomHash(32)
+				res.cookie('hash', hashUser)
+				res.cookie('id', result[0]['id'])
+				sql = "UPDATE user SET hash='" + hashUser + "' WHERE id=" + result[0]['id']
 				connect.query(sql, (error, resultQuery) => {
 					if (error) throw error
 					res.redirect('/admin')
