@@ -1,10 +1,10 @@
 div(class="col col-md-4")
 	div(class="card")
-		a(href="goods?id=" + val['id'])
+		a(href="goods/" + val['slug'])
 			div(class="card-item")
 				h5(class="card-title") #{val['name']}
 				img(
-					src="images/" + val['image'], 
+					src="/images/" + val['image'], 
 					alt="alt",
 					class="card-images"
 					)

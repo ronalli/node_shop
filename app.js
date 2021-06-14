@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
 	let goods = new Promise((resolve, reject) => {
 		connect.query(
-			'SELECT id, name, cost, image, category FROM (SELECT id, name, cost, image, category, if(if(@curr_category != category, @curr_category := category, "") != "", @k := 0, @k := @k + 1) as ind  FROM goods, ( select @curr_category := "" ) v ) goods WHERE ind < 3',
+			'SELECT id, name, slug, cost, image, category FROM (SELECT id, name, slug, cost, image, category, if(if(@curr_category != category, @curr_category := category, "") != "", @k := 0, @k := @k + 1) as ind  FROM goods, ( select @curr_category := "" ) v ) goods WHERE ind < 3',
 			function (error, result) {
 				if (error) return reject(error)
 				resolve(result)
@@ -101,12 +101,14 @@ app.get('/cat', (req, res) => {
 })
 
 
-app.get('/goods', (req, res) => {
+app.get('/goods/*', (req, res) => {
+	// console.log(req.params);
+	// res.end('ok')
 	connect.query(
-		'SELECT * FROM goods WHERE id=' + req.query.id,
+		'SELECT * FROM goods WHERE slug="' + req.params[0] + '"',
 		function (error, result) {
 			if (error) throw error
-			// console.log(JSON.parse(JSON.stringify(rezult)));
+			console.log(JSON.parse(JSON.stringify(result)));
 			res.render('goods', {
 				goods: JSON.parse(JSON.stringify(result))
 			})
