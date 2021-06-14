@@ -108,9 +108,16 @@ app.get('/goods/*', (req, res) => {
 		'SELECT * FROM goods WHERE slug="' + req.params[0] + '"',
 		function (error, result) {
 			if (error) throw error
-			console.log(JSON.parse(JSON.stringify(result)));
-			res.render('goods', {
-				goods: JSON.parse(JSON.stringify(result))
+			result = JSON.parse(JSON.stringify(result))
+			// console.log(result[0]['id']);
+			connect.query('SELECT * FROM images WHERE goods_id=' + result[0]['id'], (error2, goodsImages) => {
+				if (error2) throw error2
+				goodsImages = tools.parserStringify(goodsImages)
+				result = tools.parserStringify(result)
+				res.render('goods', {
+					goods: result,
+					goods_images: goodsImages
+				})
 			})
 		}
 	)
